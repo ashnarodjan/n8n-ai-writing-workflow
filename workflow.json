@@ -1,0 +1,207 @@
+{
+  "name": "Substack Article Writer with Style Guide",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "02a642f3-6843-4a69-befe-f11600f31315",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "topic",
+              "value": "How AI is changing human thinking — and why we risk losing agency",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "category",
+              "value": "AI & Cognition",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "keyPoints",
+              "value": "overreliance on AI, decline in critical thinking, convenience vs cognition, maintaining agency, practical ways to stay sharp",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d41fe828-02f6-41e8-942c-6d29f3fdf078",
+      "name": "Article Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are writing a Substack essay in my voice.\n\nTopic: {{$json[\"topic\"]}}\nCategory: {{$json[\"category\"]}}\nKey Points: {{$json[\"keyPoints\"]}}\n\nContext:\nI write about AI and human cognition, especially attention, critical thinking, curiosity, and human agency.\n\nVoice:\n- Write in clear, elegant prose.\n- Use simple English, but do not make it childish.\n- I am a Dutch native, so avoid difficult words when a plain word works.\n- Sound reflective, intelligent, and personal.\n- The tone can feel close to Oliver Burkeman or Alain de Botton: thoughtful, calm, observant, gently philosophical.\n- Keep my own voice: honest, curious, slightly uneasy, grounded in real life.\n- Avoid marketing tone, LinkedIn tone, corporate tone, and polished thought-leader writing.\n- Avoid choppy short sentences unless they are needed.\n- Use longer sentences when the thought needs space, but keep them natural and readable.\n- Use uncertainty only when it feels natural.\n\nStyle:\n- Start with a real moment or memory.\n- Let the thought unfold from that moment.\n- Stay close to one lived experience and one clear tension.\n- Use concrete details, but do not make the scene sound like a novel.\n- Write prose, not bullets.\n- Do not turn the essay into a guide, checklist, or advice post.\n- Do not cover too many areas at once.\n- Prefer paragraphs that develop one thought slowly.\n- Use questions sparingly, only when they feel real.\n\nStructure:\n1. Begin with a simple real moment.\n2. Stay with the feeling or unease in that moment.\n3. Let the topic of AI and cognition emerge naturally.\n4. Explore one main tension: convenience can weaken the practice of thinking.\n5. Bring in 1 or 2 grounded examples, not a full survey of society.\n6. End with a quiet personal reflection, not a lesson.\n\nLanguage rules:\n- Use simple, clear English.\n- Avoid difficult or academic words when a plain word works.\n- Avoid words like cognitive offloading, generative, attitudinal, supervisory, mechanisms, counterintuitively.\n- Prefer plain verbs: use, show, change, add, remove.\n- Do not use em dashes. Use commas, full stops, or parentheses instead.\n- Avoid semicolons unless they feel completely natural.\n- Avoid neat one-line aphorisms.\n- Avoid polished metaphor sentences.\n- Prefer plain psychological observation.\n- Use concrete sentences over elegant summary lines.\n- Do not end with a polished moral sentence.\n- End with a quiet, slightly unfinished personal thought.\n\nAvoid:\n- Bullet points\n- Marketing language\n- Corporate language\n- “In today’s world”\n- “AI is transforming everything”\n- “This is not X, it is Y”\n- “Maybe this, maybe that, maybe…”\n- Neat slogans\n- Forced metaphors\n- Overly poetic lines\n- Broad society-level conclusions\n- Perfect answers\n- Dense academic language\n- Abstract signposting phrases like “this is the central tension”, “this reveals a pattern”, “the question is how”, “the point is to”, “agency is not...”, “the tools we use...”\n\nDo not mention the style guide, knowledge base, retrieved context, prompt, rules, or instructions in the article.\n\nStart directly with the essay.\n\nWrite an 800–1200 word reflective Substack piece in prose. Start directly with the opening scene.",
+        "options": {
+          "systemMessage": "You are an expert Substack article writer. Your task is to write articles that match the author's unique voice and style.\n\nIMPORTANT: Before writing, you MUST use the \"Style Guide Knowledge Base\" tool to retrieve:\n1. The author's language style and tone preferences\n2. The article structure/infrastructure template\n3. Formatting guidelines and best practices\n4. Category-specific requirements\n\nOnce you have this information, write a complete, publication-ready article that:\n- Matches the author's established voice and writing style\n- Follows the exact article structure from the knowledge base\n- Adheres to all formatting and infrastructure rules\n- Is appropriate for the specified category\n- Covers all requested key points naturally within the article flow\n\nProvide the complete article text ready for publishing on Substack.",
+          "maxIterations": 10,
+          "returnIntermediateSteps": false
+        }
+      },
+      "id": "eaa5aa54-16e4-435a-983b-bd778f06fc75",
+      "name": "Article Writer Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        688,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "article",
+              "value": "={{ $json.output.replace(/\\n/g, '\\n\\n') }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "topic",
+              "value": "={{ $(\"Article Input\").item.json.topic }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "category",
+              "value": "={{ $(\"Article Input\").item.json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "4",
+              "name": "generatedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "61b8a8ec-d315-426f-8498-25d1d4990e11",
+              "name": "filename",
+              "value": "={{ $('Article Input').item.json.topic.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "85b6aebc-c6eb-4b6b-9adc-00c17cbf5eb2",
+      "name": "Format Article Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        768,
+        528
+      ],
+      "id": "0b9438ef-0db7-4788-8afd-5a1e5fc4b35d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Tn5wYQD6uaBq0GWe",
+          "name": "OpenAI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Article Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Article Input": {
+      "main": [
+        [
+          {
+            "node": "Article Writer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Article Writer Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Article Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Article Writer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Article Output": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7b9fc7e4-f94c-48eb-959d-1f7194d25118",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f01810dc380cac0353d1313bef094004b9e09abf0451c3bd47d8ecc68b401a4b"
+  },
+  "id": "BbFdokQbl0VPQkwY",
+  "tags": []
+}
