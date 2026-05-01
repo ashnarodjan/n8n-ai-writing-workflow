@@ -18,9 +18,13 @@ Most AI writing tools optimise for polish. They remove friction too early.
 
 This system keeps some of that friction. It produces a draft, but still expects the writer to step in, question it, and reshape it.
 
+
 ## Workflow
 
 ![Workflow](workflow.png)
+
+Download the workflow: [workflow.json](workflow.json)
+
 
 ## Example
 
